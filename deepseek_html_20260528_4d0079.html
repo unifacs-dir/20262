@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Horários Acadêmicos 26.2 | Direito & Relações Internacionais</title>
+    <!-- Font Awesome 6 (free vector icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f9 0%, #e0e8f2 100%);
+            padding: 12px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* Header otimizado para mobile */
+        .qr-header {
+            background: linear-gradient(115deg, #0A2F44 0%, #135B7C 100%);
+            padding: 1rem 1.2rem;
+            color: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-area i {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .qr-header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 60px;
+            backdrop-filter: blur(2px);
+        }
+
+        .qr-badge {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
+            padding: 0.35rem 1rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        /* BOTTOM NAVIGATION - menu inferior estilo mobile */
+        .bottom-nav {
+            display: none;
+            position: sticky;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e9edf2;
+            padding: 0.6rem 1rem;
+            justify-content: space-around;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+
+        .bottom-nav-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.6rem 0.3rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #6b8fae;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .bottom-nav-btn i {
+            font-size: 1.2rem;
+        }
+
+        .bottom-nav-btn.active {
+            background: #135B7C;
+            color: white;
+        }
+
+        /* Course nav original - escondido no mobile, vira bottom nav */
+        .course-nav {
+            display: flex;
+            flex-wrap: wrap;
+            background: #ffffff;
+            border-bottom: 1px solid #e9edf2;
+            padding: 0.5rem 1rem 0 1rem;
+            gap: 0.25rem;
+        }
+
+        .course-btn {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 1.5rem 1.5rem 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #406e8e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-btn.active {
+            color: #0f5b87;
+            background: #f8fafd;
+            border-bottom: 3px solid #0f5b87;
+        }
+
+        .main-panel {
+            padding: 1rem;
+            background: #fefefe;
+        }
+
+        /* Seletor semestres - melhorado para toque */
+        .semester-selector {
+            background: #f9fbfe;
+            border-radius: 1.2rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+            justify-content: space-between;
+            border: 1px solid #e2edf5;
+        }
+
+        .semester-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #1a506e;
+            background: #e6f0f8;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .semester-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .sem-btn {
+            background: white;
+            border: 1px solid #cfdfec;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #1f5e83;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 44px;
+        }
+
+        .sem-btn i {
+            font-size: 0.7rem;
+        }
+
+        .sem-btn.active-sem {
+            background: #135B7C;
+            border-color: #135B7C;
+            color: white;
+        }
+
+        .sem-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Grade card */
+        .grade-card {
+            background: #ffffff;
+            border-radius: 1.2rem;
+            border: 1px solid #eef3fc;
+            overflow: hidden;
+        }
+
+        .grade-header {
+            background: #f2f8fe;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #e3ecf5;
+        }
+
+        .grade-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0b445f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .turno-badge {
+            font-weight: 500;
+            font-size: 0.7rem;
+            background: #e3edf5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            color: #13566e;
+        }
+
+        /* Blocos de turno */
+        .turno-block {
+            margin-bottom: 0;
+            border-bottom: 1px solid #f0f4fa;
+        }
+
+        .turno-block:last-child {
+            border-bottom: none;
+        }
+
+        .turno-header {
+            background: #f8fafd;
+            padding: 0.7rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e2ecf5;
+            border-left: 4px solid;
+        }
+
+        .turno-header.matutino {
+            border-left-color: #2c7da0;
+            background: linear-gradient(90deg, #f3f9ff 0%, #ffffff 100%);
+        }
+
+        .turno-header.noturno {
+            border-left-color: #5e548e;
+            background: linear-gradient(90deg, #f9f5ff 0%, #ffffff 100%);
+        }
+
+        .turno-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .turno-title.matutino {
+            color: #1a6d8f;
+        }
+
+        .turno-title.noturno {
+            color: #5a4696;
+        }
+
+        .disciplines-group-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .disciplines-group-table td {
+            padding: 0.8rem 0.8rem 0.8rem 1rem;
+            border-bottom: 1px solid #f0f6fc;
+            color: #1f3a4b;
+            vertical-align: middle;
+            display: block;
+            width: 100%;
+        }
+
+        /* Mobile: transforma tabela em lista */
+        .disciplines-group-table tr {
+            display: block;
+            border-bottom: 1px solid #f0f6fc;
+        }
+
+        .disciplines-group-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .disciplines-group-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .disciplina-nome {
+            font-weight: 600;
+            color: #1f405e;
+            flex: 2;
+            font-size: 0.85rem;
+        }
+
+        /* Badges de modalidade */
+        .badge-modalidade {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.25rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .badge-presencial {
+            background: #e0f5e9;
+            color: #1e6f3f;
+            border-left: 3px solid #2e8b57;
+        }
+
+        .badge-digital {
+            background: #e9f4ff;
+            color: #1f6392;
+            border-left: 3px solid #2c7be5;
+        }
+
+        .badge-hibrido {
+            background: #f3e8ff;
+            color: #6f42c1;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .empty-message {
+            padding: 2rem;
+            text-align: center;
+            color: #6b8fae;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .footer-note {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #6f8fae;
+            border-top: 1px solid #e9f0f6;
+            padding-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Desktop: mantém tabela normal */
+        @media (min-width: 769px) {
+            .bottom-nav {
+                display: none;
+            }
+            
+            .disciplines-group-table td {
+                display: table-cell;
+                padding: 0.9rem 1rem 0.9rem 2rem;
+            }
+            
+            .disciplines-group-table tr {
+                display: table-row;
+            }
+            
+            .main-panel {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Mobile: bottom nav visível e course-nav escondido */
+        @media (max-width: 768px) {
+            .course-nav {
+                display: none;
+            }
+            
+            .bottom-nav {
+                display: flex;
+            }
+            
+            body {
+                padding: 8px;
+            }
+            
+            .qr-header h1 {
+                font-size: 1rem;
+            }
+            
+            .logo-area i {
+                font-size: 1.3rem;
+            }
+            
+            .semester-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .semester-buttons {
+                justify-content: center;
+            }
+            
+            .sem-btn {
+                padding: 0.45rem 0.9rem;
+                font-size: 0.7rem;
+                min-height: 40px;
+            }
+            
+            .badge-modalidade {
+                white-space: normal;
+                font-size: 0.6rem;
+                padding: 0.2rem 0.6rem;
+            }
+        }
+
+        /* Telas muito pequenas */
+        @media (max-width: 480px) {
+            .sem-btn {
+                padding: 0.4rem 0.7rem;
+                font-size: 0.65rem;
+            }
+            
+            .disciplina-nome {
+                font-size: 0.8rem;
+            }
+            
+            .turno-title {
+                font-size: 0.8rem;
+            }
+        }
+
+        i.fa, i.far, i.fas {
+            pointer-events: none;
+        }
+        
+        /* Feedback de toque */
+        button, .sem-btn, .course-btn, .bottom-nav-btn {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        button:active, .sem-btn:active, .bottom-nav-btn:active {
+            transform: scale(0.97);
+            transition: transform 0.05s;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="qr-header">
+        <div class="logo-area">
+            <i class="fas fa-gavel"></i>
+            <h1>Horários 26.2</h1>
+        </div>
+        <div class="qr-badge">
+            <i class="fas fa-qrcode"></i> <span>QR Code · Aluno</span>
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+    </div>
+
+    <!-- Desktop navigation -->
+    <div class="course-nav" id="courseNav">
+        <button class="course-btn" data-course="direitoCTN"><i class="fas fa-balance-scale"></i> Direito - CTN</button>
+        <button class="course-btn" data-course="direitoLapa"><i class="fas fa-landmark"></i> Direito - Lapa</button>
+        <button class="course-btn" data-course="relInternacionais"><i class="fas fa-globe-americas"></i> Relações Internacionais</button>
+    </div>
+
+    <!-- Mobile bottom navigation -->
+    <div class="bottom-nav" id="bottomNav">
+        <button class="bottom-nav-btn" data-course="direitoCTN"><i class="fas fa-balance-scale"></i><span>Direito CTN</span></button>
+        <button class="bottom-nav-btn" data-course="direitoLapa"><i class="fas fa-landmark"></i><span>Direito Lapa</span></button>
+        <button class="bottom-nav-btn" data-course="relInternacionais"><i class="fas fa-globe-americas"></i><span>Relações Int.</span></button>
+    </div>
+
+    <div class="main-panel">
+        <div class="semester-selector">
+            <div class="semester-label"><i class="fas fa-calendar-alt"></i> Semestre letivo:</div>
+            <div class="semester-buttons" id="semesterButtonsContainer"></div>
+        </div>
+
+        <div class="grade-card" id="gradeDisplay">
+            <div class="grade-header">
+                <h3><i class="fas fa-chalkboard-user"></i> Grade Curricular 
+                    <span id="turnoInfo" class="turno-badge"><i class="fas fa-clock"></i> Turnos</span>
+                </h3>
+            </div>
+            <div id="disciplinesList">
+                <div class="empty-message">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Selecione um curso e semestre</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-note">
+            <span><i class="fas fa-check-circle"></i> 26.2</span>
+            <span><i class="fas fa-building"></i> Presencial</span>
+            <span><i class="fas fa-laptop-code"></i> Digital Síncrono</span>
+            <span><i class="fas fa-users"></i> Híbrido</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados completos (mesma base)
+    const COURSES_DATA = {
+        direitoCTN: {
+            name: "Direito Previsão de Horários de 26.2 - CTN Salvador",
+            semesters: {
+                "1º Semestre": [
+                    { turno: "Matutino", disciplina: "Lições Preliminares de Direito e Parte Geral do Direito Civil", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Teoria da Constituição, Teoria Política e Direitos Fundamentais", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Academia de Futuros Profissionais", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Lições Preliminares de Direito e Parte Geral do Direito Civil", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Teoria da Constituição, Teoria Política e Direitos Fundamentais", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Academia de Futuros Profissionais", modalidade: "Digital Síncrono" }
+                ],
+                "2º Semestre": [
+                    { turno: "Matutino", disciplina: "Direito Penal: Teoria Geral", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito Civil: Obrigações, Responsabilidade Civil e Contratos", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direitos Humanos e Multiculturalismo", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Penal: Teoria Geral", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Civil: Obrigações, Responsabilidade Civil e Contratos", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direitos Humanos e Multiculturalismo", modalidade: "Presencial" }
+                ],
+                "3º Semestre": [
+                    { turno: "Matutino", disciplina: "Constituição, Democracia e Meio Ambiente", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Teoria da Empresa e Direito Societário", modalidade: "Híbrido" },
+                    { turno: "Matutino", disciplina: "Direito Digital e Inteligência Artificial", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Penal: Teoria Geral", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Constituição, Democracia e Meio Ambiente", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Digital e Inteligência Artificial", modalidade: "Presencial" }
+                ],
+                "4º Semestre A": [
+                    { turno: "Matutino", disciplina: "Direito Processual Civil: Da Teoria Geral ao Processo de Conhecimento", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito do Trabalho", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito Previdenciário", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Penal: Parte especial e legislação extravagante", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito de família e sucessões", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Previdenciário", modalidade: "Presencial" }
+                ],
+                "4º Semestre B": [
+                    { turno: "Matutino", disciplina: "Direito Penal: Parte especial e legislação extravagante", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito de família e sucessões", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito Previdenciário", modalidade: "Presencial" }
+                ],
+                "5º Semestre": [
+                    { turno: "Matutino", disciplina: "Direito Penal: Parte especial e legislação extravagante", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito de família e sucessões", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Penal: Parte especial e legislação extravagante", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito de família e sucessões", modalidade: "Presencial" }
+                ],
+                "6º Semestre A": [
+                    { turno: "Matutino", disciplina: "Direito processual civil", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Bens, posse e propriedade", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Estruturas e ambientes das organizações", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Sistema tributário nacional e a atividade empresarial", modalidade: "Presencial" }
+                ],
+                "6º Semestre B": [
+                    { turno: "Matutino", disciplina: "Direito processual penal", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Relações estatais, meio ambiente e sustentabilidade", modalidade: "Presencial" }
+                ],
+                "7º Semestre": [
+                    { turno: "Matutino", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Sistema tributário nacional e a atividade empresarial", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO I - ÉTICA PROFISSIONAL", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Sistema tributário nacional e a atividade empresarial", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Relações trabalhistas", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO I - ÉTICA PROFISSIONAL", modalidade: "Digital Síncrono" }
+                ],
+                "8º Semestre": [
+                    { turno: "Matutino", disciplina: "Sistema tributário nacional e a atividade empresarial", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Unidade curricular digital personalizável I", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO II - PRÁTICAS PROCESSUAIS", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Projeto de pesquisa", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Unidade curricular digital personalizável I", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Direito processual penal", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO II - PRÁTICAS PROCESSUAIS", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Projeto de pesquisa", modalidade: "Digital Síncrono" }
+                ],
+                "9º Semestre": [
+                    { turno: "Matutino", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Unidade curricular digital personalizável II", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "TCC: Trabalho científico", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO III - PRÁTICAS JURÍDICAS", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Unidade curricular digital personalizável II", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Direito processual penal", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO III - PRÁTICAS JURÍDICAS", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "TCC: Trabalho científico", modalidade: "Híbrido" }
+                ],
+                "10º Semestre": [
+                    { turno: "Matutino", disciplina: "Core Curriculum II", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Relações jurídicas internacionais", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO IV - PRÁTICAS PROFISSIONAIS", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Core curriculum", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Core Curriculum II", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO IV - PRÁTICAS PROFISSIONAIS", modalidade: "Presencial" }
+                ]
+            }
+        },
+        direitoLapa: {
+            name: "Direito Previsão de Horários de 26.2 - Lapa Salvador",
+            semesters: {
+                "1º Semestre": [
+                    { turno: "Noturno", disciplina: "Lições Preliminares de Direito e Parte Geral do Direito Civil", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Teoria da Constituição, Teoria Política e Direitos Fundamentais", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Academia de Futuros Profissionais", modalidade: "Digital Síncrono" }
+                ],
+                "2º Semestre": [
+                    { turno: "Noturno", disciplina: "Direito Penal: Teoria Geral", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Civil: Obrigações, Responsabilidade Civil e Contratos", modalidade: "Presencial" }
+                ],
+                "8º Semestre": [
+                    { turno: "Matutino", disciplina: "Unidade curricular digital personalizável I", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO II - PRÁTICAS PROCESSUAIS", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Projeto de pesquisa", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Unidade curricular digital personalizável I", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO II - PRÁTICAS PROCESSUAIS", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Projeto de pesquisa", modalidade: "Digital Síncrono" }
+                ],
+                "9º Semestre": [
+                    { turno: "Matutino", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Unidade curricular digital personalizável II", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "TCC: Trabalho científico", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO III - PRÁTICAS JURÍDICAS", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Unidade curricular digital personalizável II", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO III - PRÁTICAS JURÍDICAS", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "TCC: Trabalho científico", modalidade: "Híbrido" }
+                ],
+                "10º Semestre": [
+                    { turno: "Matutino", disciplina: "Core Curriculum II", modalidade: "Digital Síncrono" },
+                    { turno: "Matutino", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Matutino", disciplina: "Estágio EIXO IV - PRÁTICAS PROFISSIONAIS", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Direito Digital", modalidade: "Presencial" },
+                    { turno: "Noturno", disciplina: "Core Curriculum II", modalidade: "Digital Síncrono" },
+                    { turno: "Noturno", disciplina: "Estágio EIXO IV - PRÁTICAS PROFISSIONAIS", modalidade: "Presencial" }
+                ]
+            }
+        },
+        relInternacionais: {
+            name: "Relações Internacionais Previsão de Horários de 26.2 - CTN Salvador",
+            semesters: {
+                "2º Semestre": [{ turno: "Matutino", disciplina: "Cenários e desenvolvimento socioeconômico", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Agendas e posicionamentos internacionais", modalidade: "Presencial" }],
+                "3º Semestre": [{ turno: "Matutino", disciplina: "Cenários e desenvolvimento socioeconômico", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Agendas e posicionamentos internacionais", modalidade: "Presencial" }],
+                "4º Semestre": [{ turno: "Matutino", disciplina: "Globalização e estratégia", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Agendas e posicionamentos internacionais", modalidade: "Presencial" }],
+                "5º Semestre": [{ turno: "Matutino", disciplina: "Globalização e estratégia", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Agendas e posicionamentos internacionais", modalidade: "Presencial" }],
+                "6º Semestre": [{ turno: "Matutino", disciplina: "Globalização e estratégia", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Agendas e posicionamentos internacionais", modalidade: "Presencial" }],
+                "7º Semestre": [{ turno: "Matutino", disciplina: "Economia política das relações internacionais", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Trabalho de conclusão de curso", modalidade: "Presencial" }],
+                "8º Semestre": [{ turno: "Matutino", disciplina: "Unidade curricular digital personalizável I", modalidade: "Presencial" }, { turno: "Matutino", disciplina: "Economia política das relações internacionais", modalidade: "Presencial" }]
+            }
+        }
+    };
+
+    const semesterOrder = ["1º Semestre", "2º Semestre", "3º Semestre", "4º Semestre A", "4º Semestre B", "5º Semestre", "6º Semestre A", "6º Semestre B", "7º Semestre", "8º Semestre", "9º Semestre", "10º Semestre"];
+    const riOrder = ["2º Semestre", "3º Semestre", "4º Semestre", "5º Semestre", "6º Semestre", "7º Semestre", "8º Semestre"];
+
+    let currentCourse = "direitoCTN";
+    let currentSemester = "";
+
+    const semesterContainer = document.getElementById("semesterButtonsContainer");
+    const gradeDisplayDiv = document.getElementById("disciplinesList");
+    const turnoInfoSpan = document.getElementById("turnoInfo");
+
+    function getModalidadeClass(modalidade) {
+        const m = modalidade.toLowerCase();
+        if (m.includes("presencial")) return "badge-presencial";
+        if (m.includes("digital síncrono") || m === "online") return "badge-digital";
+        if (m.includes("híbrido")) return "badge-hibrido";
+        return "badge-presencial";
+    }
+
+    function getModalidadeIcon(modalidade) {
+        const m = modalidade.toLowerCase();
+        if (m.includes("presencial")) return '<i class="fas fa-building"></i>';
+        if (m.includes("digital síncrono")) return '<i class="fas fa-laptop-code"></i>';
+        if (m.includes("híbrido")) return '<i class="fas fa-users"></i>';
+        return '<i class="fas fa-book"></i>';
+    }
+
+    function getAvailableSemesters(courseId) {
+        const semestersObj = COURSES_DATA[courseId].semesters;
+        let semKeys = Object.keys(semestersObj);
+        if (courseId === "relInternacionais") semKeys.sort((a,b) => riOrder.indexOf(a) - riOrder.indexOf(b));
+        else semKeys.sort((a,b) => semesterOrder.indexOf(a) - semesterOrder.indexOf(b));
+        return semKeys;
+    }
+
+    function renderSemesterButtons() {
+        const semesters = getAvailableSemesters(currentCourse);
+        semesterContainer.innerHTML = "";
+        if (!semesters.length) {
+            semesterContainer.innerHTML = '<span style="padding:0.4rem"><i class="fas fa-exclamation-circle"></i> Nenhum semestre</span>';
+            return;
+        }
+        semesters.forEach(sem => {
+            const btn = document.createElement("button");
+            btn.className = "sem-btn";
+            if (currentSemester === sem) btn.classList.add("active-sem");
+            btn.innerHTML = `<i class="fas fa-layer-group"></i> ${sem}`;
+            btn.addEventListener("click", () => {
+                currentSemester = sem;
+                renderSemesterButtons();
+                renderGrade();
+            });
+            semesterContainer.appendChild(btn);
+        });
+        if (!currentSemester && semesters.length) currentSemester = semesters[0];
+        if (currentSemester && !semesters.includes(currentSemester)) currentSemester = semesters[0];
+        renderGrade();
+    }
+
+    function renderGrade() {
+        if (!currentSemester) {
+            gradeDisplayDiv.innerHTML = `<div class="empty-message"><i class="fas fa-book-open"></i> Selecione um semestre</div>`;
+            turnoInfoSpan.innerHTML = `<i class="fas fa-clock"></i> --`;
+            return;
+        }
+        const semesterData = COURSES_DATA[currentCourse].semesters[currentSemester];
+        if (!semesterData || semesterData.length === 0) {
+            gradeDisplayDiv.innerHTML = `<div class="empty-message"><i class="fas fa-ban"></i> Nenhuma disciplina</div>`;
+            turnoInfoSpan.innerHTML = `<i class="fas fa-calendar-week"></i> ${currentSemester}`;
+            return;
+        }
+
+        const groups = { Matutino: [], Noturno: [] };
+        semesterData.forEach(item => {
+            const turnoKey = item.turno === "Matutino" ? "Matutino" : "Noturno";
+            groups[turnoKey].push(item);
+        });
+
+        let html = "";
+        const turnosOrdenados = ["Matutino", "Noturno"];
+        for (let turno of turnosOrdenados) {
+            const disciplinas = groups[turno];
+            if (disciplinas.length === 0) continue;
+            const iconTurno = turno === "Matutino" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            const headerClass = turno === "Matutino" ? "matutino" : "noturno";
+            html += `<div class="turno-block">
+                        <div class="turno-header ${headerClass}">
+                            <div class="turno-title ${headerClass}">
+                                ${iconTurno} <strong>${turno}</strong>
+                            </div>
+                        </div>
+                        <table class="disciplines-group-table">
+                            <tbody>`;
+            disciplinas.forEach(disp => {
+                const badgeClass = getModalidadeClass(disp.modalidade);
+                const modalIcon = getModalidadeIcon(disp.modalidade);
+                html += `<tr>
+                            <td><span class="disciplina-nome">${disp.disciplina}</span>
+                            <span class="badge-modalidade ${badgeClass}">${modalIcon} ${disp.modalidade}</span></td>
+                          </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        }
+
+        if (html === "") {
+            html = `<div class="empty-message"><i class="fas fa-info-circle"></i> Nenhuma disciplina</div>`;
+        }
+
+        gradeDisplayDiv.innerHTML = html;
+        turnoInfoSpan.innerHTML = `<i class="fas fa-calendar-week"></i> ${currentSemester}`;
+    }
+
+    function switchCourse(courseId) {
+        currentCourse = courseId;
+        const semList = getAvailableSemesters(courseId);
+        currentSemester = semList.length ? semList[0] : "";
+        renderSemesterButtons();
+        
+        // Atualiza ambos os grupos de botões
+        document.querySelectorAll(".course-btn, .bottom-nav-btn").forEach(btn => {
+            if (btn.getAttribute("data-course") === courseId) btn.classList.add("active");
+            else btn.classList.remove("active");
+        });
+    }
+
+    // Eventos para desktop e mobile
+    document.querySelectorAll(".course-btn, .bottom-nav-btn").forEach(btn => {
+        btn.addEventListener("click", () => switchCourse(btn.getAttribute("data-course")));
+    });
+
+    switchCourse("direitoCTN");
+</script>
+</body>
+</html>
